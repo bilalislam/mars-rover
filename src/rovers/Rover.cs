@@ -44,7 +44,8 @@ namespace rovers
         }
 
         /// <summary>
-        /// mevcut posizyon boyutu aşarsa R.I.P.
+        /// out of plateau exception
+        /// crus rover on same point 
         /// </summary>
         /// <exception cref="NotImplementedException"></exception>
         private void Move(){
