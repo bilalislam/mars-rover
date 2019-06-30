@@ -90,7 +90,7 @@ namespace rovers
         /// <param name="y"></param>
         private void SetRoverPoint(Rover rover, int x, int y){
             rover.CurrentPoint = this._points[x, y];
-            rover.CurrentPoint.RoverOn = rover;
+            this._points[x, y].RoverOn = rover;
         }
 
         public override string ToString(){
