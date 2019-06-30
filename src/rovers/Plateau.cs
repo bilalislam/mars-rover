@@ -99,8 +99,10 @@ namespace rovers
                 for (int j = 0; j <= this._y; j++){
                     sb.AppendLine($"x : {this._points[i, j].X} " +
                                   $"y : {this._points[i, j].Y} " +
-                                  $"rover: {this._points[i, j].RoverOn?.CurrentPoint.X} <-> {this._points[i, j].RoverOn?.CurrentPoint.Y} " +
-                                  $"=> " +
+                                  $"rover: {this._points[i, j].RoverOn?.CurrentPoint.X} <-> " +
+                                  $"{this._points[i, j].RoverOn?.CurrentPoint.Y} <-> " +
+                                  $"{this._points[i, j].RoverOn?.Direction}" +
+                                  "|" +
                                   $" bottom : {this._points[i, j].Bottom?.X} <-> {this._points[i, j].Bottom?.Y} " +
                                   $" upper  : {this._points[i, j].Upper?.X}  <-> {this._points[i, j].Upper?.Y} " +
                                   $" left   : {this._points[i, j].Left?.X}   <-> {this._points[i, j].Left?.Y}" +
