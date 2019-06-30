@@ -20,7 +20,7 @@ namespace rovers
         public Plateau(int x, int y){
             this._x = x;
             this._y = y;
-            this._points = new Point[x, y];
+            this._points = new Point[x + 1, y + 1];
             this._rovers = new List<Rover>();
 
             Init();
@@ -31,8 +31,8 @@ namespace rovers
         /// all point knows all neighbours of itself
         /// </summary>
         private void Init(){
-            for (int i = 0; i < this._x; i++){
-                for (int j = 0; j < this._y; j++){
+            for (int i = 0; i <= this._x; i++){
+                for (int j = 0; j <= this._y; j++){
                     var point = new Point(i, j);
                     this._points[i, j] = point;
                     if (j > 0){
@@ -49,7 +49,7 @@ namespace rovers
         }
 
         public void AddRover(Rover rover){
-            if (!(rover.X >= this._x || rover.Y >= this._y)){
+            if (!(rover.X > this._x || rover.X < 0 || rover.Y > this._y || rover.Y < 0)){
                 this._rovers.Add(rover);
                 SetRoverPoint(rover, rover.X, rover.Y);
             }
@@ -70,13 +70,15 @@ namespace rovers
                 }
             }
 
-            RoverConsoleOutput();
+            ConsoleOutput();
         }
 
-        private void RoverConsoleOutput(){
-            foreach (var rover in this._rovers){
-                Console.WriteLine(rover.ToString());
+        private void ConsoleOutput(){
+            for (int i = 1; i <= this._rovers.Count; i++){
+                Console.WriteLine($"rover {i} : {this._rovers[i - 1]}");
             }
+
+            Console.WriteLine($"plateau matris : \n {this}");
         }
 
         /// <summary>
@@ -88,13 +90,13 @@ namespace rovers
         /// <param name="y"></param>
         private void SetRoverPoint(Rover rover, int x, int y){
             rover.CurrentPoint = this._points[x, y];
-            this._points[x, y].RoverOn = rover;
+            rover.CurrentPoint.RoverOn = rover;
         }
 
         public override string ToString(){
             var sb = new StringBuilder();
-            for (int i = 0; i < this._x; i++){
-                for (int j = 0; j < this._y; j++){
+            for (int i = 0; i <= this._x; i++){
+                for (int j = 0; j <= this._y; j++){
                     sb.AppendLine($"x : {this._points[i, j].X} " +
                                   $"y : {this._points[i, j].Y} " +
                                   $"rover: {this._points[i, j].RoverOn?.CurrentPoint.X} <-> {this._points[i, j].RoverOn?.CurrentPoint.Y} " +

@@ -77,6 +77,9 @@ namespace rovers
                     if (this.CurrentPoint.Right == null)
                         throw new Exception("Out of plateau !");
 
+                    if (this.CurrentPoint.Right.RoverOn != null)
+                        throw new Exception("Crush !");
+
                     this.CurrentPoint.RoverOn = null;
                     this.CurrentPoint.Right.RoverOn = this;
                     this.CurrentPoint = this.CurrentPoint.Right;
@@ -84,6 +87,9 @@ namespace rovers
                 case Direction.W:
                     if (this.CurrentPoint.Left == null)
                         throw new Exception("Out of plateau !");
+
+                    if (this.CurrentPoint.Left.RoverOn != null)
+                        throw new Exception("Crush !");
 
                     this.CurrentPoint.RoverOn = null;
                     this.CurrentPoint.Left.RoverOn = this;
@@ -93,6 +99,9 @@ namespace rovers
                     if (this.CurrentPoint.Upper == null)
                         throw new Exception("Out of plateau !");
 
+                    if (this.CurrentPoint.Upper.RoverOn != null)
+                        throw new Exception("Crush !");
+
                     this.CurrentPoint.RoverOn = null;
                     this.CurrentPoint.Upper.RoverOn = this;
                     this.CurrentPoint = this.CurrentPoint.Upper;
@@ -100,6 +109,9 @@ namespace rovers
                 case Direction.S:
                     if (this.CurrentPoint.Bottom == null)
                         throw new Exception("Out of plateau !");
+
+                    if (this.CurrentPoint.Bottom.RoverOn != null)
+                        throw new Exception("Crush !");
 
                     this.CurrentPoint.RoverOn = null;
                     this.CurrentPoint.Bottom.RoverOn = this;
