@@ -68,7 +68,6 @@ namespace rovers
 
         /// <summary>
         /// out of plateau exception
-        /// crush rover on same point 
         /// </summary>
         /// <exception cref="NotImplementedException"></exception>
         private void Move(){
@@ -76,9 +75,6 @@ namespace rovers
                 case Direction.E:
                     if (this.CurrentPoint.Right == null)
                         throw new Exception("Out of plateau !");
-
-                    if (this.CurrentPoint.Right.RoverOn != null)
-                        throw new Exception("Crush !");
 
                     this.CurrentPoint.RoverOn = null;
                     this.CurrentPoint.Right.RoverOn = this;
@@ -88,9 +84,6 @@ namespace rovers
                     if (this.CurrentPoint.Left == null)
                         throw new Exception("Out of plateau !");
 
-                    if (this.CurrentPoint.Left.RoverOn != null)
-                        throw new Exception("Crush !");
-
                     this.CurrentPoint.RoverOn = null;
                     this.CurrentPoint.Left.RoverOn = this;
                     this.CurrentPoint = this.CurrentPoint.Left;
@@ -99,9 +92,6 @@ namespace rovers
                     if (this.CurrentPoint.Upper == null)
                         throw new Exception("Out of plateau !");
 
-                    if (this.CurrentPoint.Upper.RoverOn != null)
-                        throw new Exception("Crush !");
-
                     this.CurrentPoint.RoverOn = null;
                     this.CurrentPoint.Upper.RoverOn = this;
                     this.CurrentPoint = this.CurrentPoint.Upper;
@@ -109,9 +99,6 @@ namespace rovers
                 case Direction.S:
                     if (this.CurrentPoint.Bottom == null)
                         throw new Exception("Out of plateau !");
-
-                    if (this.CurrentPoint.Bottom.RoverOn != null)
-                        throw new Exception("Crush !");
 
                     this.CurrentPoint.RoverOn = null;
                     this.CurrentPoint.Bottom.RoverOn = this;
