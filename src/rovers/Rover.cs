@@ -66,43 +66,39 @@ namespace rovers
             else if (this.Direction == Direction.N) this.Direction = Direction.E;
         }
 
-        /// <summary>
-        /// out of plateau exception
-        /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
         private void Move(){
             switch (this.Direction){
                 case Direction.E:
-                    if (this.CurrentPoint.Right == null)
-                        throw new Exception("Out of plateau !");
+                    if (this.CurrentPoint.Right != null){
+                        this.CurrentPoint.RoverOn = null;
+                        this.CurrentPoint.Right.RoverOn = this;
+                        this.CurrentPoint = this.CurrentPoint.Right;
+                    }
 
-                    this.CurrentPoint.RoverOn = null;
-                    this.CurrentPoint.Right.RoverOn = this;
-                    this.CurrentPoint = this.CurrentPoint.Right;
                     break;
                 case Direction.W:
-                    if (this.CurrentPoint.Left == null)
-                        throw new Exception("Out of plateau !");
+                    if (this.CurrentPoint.Left != null){
+                        this.CurrentPoint.RoverOn = null;
+                        this.CurrentPoint.Left.RoverOn = this;
+                        this.CurrentPoint = this.CurrentPoint.Left;
+                    }
 
-                    this.CurrentPoint.RoverOn = null;
-                    this.CurrentPoint.Left.RoverOn = this;
-                    this.CurrentPoint = this.CurrentPoint.Left;
                     break;
                 case Direction.N:
-                    if (this.CurrentPoint.Upper == null)
-                        throw new Exception("Out of plateau !");
+                    if (this.CurrentPoint.Upper != null){
+                        this.CurrentPoint.RoverOn = null;
+                        this.CurrentPoint.Upper.RoverOn = this;
+                        this.CurrentPoint = this.CurrentPoint.Upper;
+                    }
 
-                    this.CurrentPoint.RoverOn = null;
-                    this.CurrentPoint.Upper.RoverOn = this;
-                    this.CurrentPoint = this.CurrentPoint.Upper;
                     break;
                 case Direction.S:
-                    if (this.CurrentPoint.Bottom == null)
-                        throw new Exception("Out of plateau !");
+                    if (this.CurrentPoint.Bottom != null){
+                        this.CurrentPoint.RoverOn = null;
+                        this.CurrentPoint.Bottom.RoverOn = this;
+                        this.CurrentPoint = this.CurrentPoint.Bottom;
+                    }
 
-                    this.CurrentPoint.RoverOn = null;
-                    this.CurrentPoint.Bottom.RoverOn = this;
-                    this.CurrentPoint = this.CurrentPoint.Bottom;
                     break;
             }
         }
