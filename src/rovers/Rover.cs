@@ -30,17 +30,16 @@ namespace rovers
             }
         }
 
-        public void RunCommand(){
-            throw new NotImplementedException();
+        public void RunCommand(int index){
+            if (this.Command.Length > index){
+                //do something
+            }
         }
 
-
         private void TurnLeft(){
-            throw new NotImplementedException();
         }
 
         private void TurnRight(){
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -49,7 +48,6 @@ namespace rovers
         /// </summary>
         /// <exception cref="NotImplementedException"></exception>
         private void Move(){
-            throw new NotImplementedException();
         }
     }
 }

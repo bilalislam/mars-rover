@@ -58,15 +58,17 @@ namespace rovers
             }
         }
 
-        public string Run(){
+        public void Run(){
             if (!this._rovers.Any()){
                 throw new Exception("Any rovers can not found !");
             }
 
-            foreach (var rover in this._rovers){
+            var maxTaskCount = this._rovers.Max(x => x.Command).Length;
+            for (int i = 0; i < maxTaskCount; i++){
+                foreach (var rover in this._rovers){
+                    rover.RunCommand(i);
+                }
             }
-
-            return string.Empty;
         }
 
         /// <summary>

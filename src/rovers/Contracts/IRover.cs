@@ -2,6 +2,6 @@
 {
     public interface IRover
     {
-        void RunCommand();
+        void RunCommand(int index);
     }
 }
