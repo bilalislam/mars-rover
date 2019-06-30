@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 
 namespace rovers
 {
@@ -30,9 +31,23 @@ namespace rovers
             }
         }
 
+        /// <summary>
+        ///  run commands concurrently
+        /// </summary>
+        /// <param name="index"></param>
         public void RunCommand(int index){
             if (this.Command.Length > index){
-                //do something
+                switch (Command[index]){
+                    case 'L':
+                        TurnLeft();
+                        break;
+                    case 'R':
+                        TurnRight();
+                        break;
+                    case 'M':
+                        Move();
+                        break;
+                }
             }
         }
 
