@@ -12,7 +12,9 @@ namespace rovers
             var p = new Plateau(5, 5);
             p.AddRover(new Rover(1, 2, Direction.N, "LMLMLMLMM"));
             p.AddRover(new Rover(3, 3, Direction.E, "MMRMMRMRRM"));
-            p.Run();
+
+            IManager manager = new RoverManager(p);
+            manager.Run();
 
             sw.Stop();
             Console.WriteLine(sw.Elapsed);

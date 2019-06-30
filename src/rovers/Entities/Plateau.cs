@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace rovers
@@ -10,7 +9,7 @@ namespace rovers
         private readonly int _x;
         private readonly int _y;
         public Point[,] _points;
-        private readonly List<Rover> _rovers;
+        public List<Rover> Rovers { get; private set; }
 
         /// <summary>
         /// x and y are representing to the dimensions
@@ -21,7 +20,7 @@ namespace rovers
             this._x = x;
             this._y = y;
             this._points = new Point[x + 1, y + 1];
-            this._rovers = new List<Rover>();
+            this.Rovers = new List<Rover>();
 
             Init();
         }
@@ -50,35 +49,12 @@ namespace rovers
 
         public void AddRover(Rover rover){
             if (!(rover.X > this._x || rover.X < 0 || rover.Y > this._y || rover.Y < 0)){
-                this._rovers.Add(rover);
+                this.Rovers.Add(rover);
                 SetRoverPoint(rover, rover.X, rover.Y);
             }
             else{
                 throw new Exception("Invalid rover co-ordinates !");
             }
-        }
-
-        public void Run(){
-            if (!this._rovers.Any()){
-                throw new Exception("Any rovers can not found !");
-            }
-
-            var maxTaskCount = this._rovers.Max(x => x.Command).Length;
-            for (int i = 0; i < maxTaskCount; i++){
-                foreach (var rover in this._rovers){
-                    rover.RunCommand(i);
-                }
-            }
-
-            ConsoleOutput();
-        }
-
-        private void ConsoleOutput(){
-            for (int i = 1; i <= this._rovers.Count; i++){
-                Console.WriteLine($"rover {i} : {this._rovers[i - 1]}");
-            }
-
-            Console.WriteLine($"plateau matris : \n {this}");
         }
 
         /// <summary>
@@ -90,7 +66,7 @@ namespace rovers
         /// <param name="y"></param>
         private void SetRoverPoint(Rover rover, int x, int y){
             rover.CurrentPoint = this._points[x, y];
-            this._points[x, y].RoverOn = rover;
+            rover.CurrentPoint.RoverOn = rover;
         }
 
         public override string ToString(){
