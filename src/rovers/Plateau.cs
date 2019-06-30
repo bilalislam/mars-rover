@@ -49,17 +49,24 @@ namespace rovers
         }
 
         public void AddRover(Rover rover){
-            this._rovers.Add(rover);
-            SetRoverPoint(rover, rover.X, rover.Y);
+            if (!(rover.X >= this._x || rover.Y >= this._y)){
+                this._rovers.Add(rover);
+                SetRoverPoint(rover, rover.X, rover.Y);
+            }
+            else{
+                throw new Exception("Invalid rover co-ordinates !");
+            }
         }
 
-        public void Run(){
+        public string Run(){
             if (!this._rovers.Any()){
                 throw new Exception("Any rovers can not found !");
             }
 
             foreach (var rover in this._rovers){
             }
+
+            return string.Empty;
         }
 
         /// <summary>
