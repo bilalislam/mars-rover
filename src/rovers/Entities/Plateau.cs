@@ -35,13 +35,13 @@ namespace rovers
                     var point = new Point(i, j);
                     this._points[i, j] = point;
                     if (j > 0){
-                        point.Left = this._points[i, j - 1];
-                        point.Left.Right = point;
+                        point.Bottom = this._points[i, j - 1];
+                        point.Bottom.Upper = point;
                     }
 
                     if (i > 0){
-                        point.Upper = this._points[i - 1, j];
-                        point.Upper.Bottom = point;
+                        point.Left = this._points[i - 1, j];
+                        point.Left.Right = point;
                     }
                 }
             }
