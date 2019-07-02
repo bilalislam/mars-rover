@@ -1,5 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using rovers.Exceptions;
 
 namespace rovers
 {
@@ -22,12 +22,10 @@ namespace rovers
         }
 
         private void SetCommand(string cmd){
-            if (cmd.Any(item => _letters.Contains(item))){
+            if (cmd.Any(item => _letters.Contains(item)))
                 this.Command = cmd;
-            }
-            else{
-                throw new Exception("Invalid input");
-            }
+            else
+                throw new InvalidArgumentException("Invalid input");
         }
 
         /// <summary>
@@ -67,7 +65,8 @@ namespace rovers
         }
 
         private void Move(){
-            new MoveAction().Execute(this);
+            var action = new MoveAction();
+            action.Execute(this);
         }
 
         public override string ToString(){

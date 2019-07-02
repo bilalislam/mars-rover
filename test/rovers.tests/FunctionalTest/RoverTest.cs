@@ -9,8 +9,7 @@ namespace rovers.tests
         [Theory]
         [InlineData(5, 5)]
         [InlineData(10, 10)]
-        public void Should_Be_True_Coordinates_With_Plateau(int x, int y)
-        {
+        public void Should_Be_True_Coordinates_With_Plateau(int x, int y){
             var p = new Plateau(x, y);
             x += 1;
             y += 1;
@@ -19,16 +18,14 @@ namespace rovers.tests
 
         [Theory]
         [InlineData(-1, 6, Direction.E, "LMLMLMLMM")]
-        public void Should_Throw_Invalid_Coordinates_Exception(int x, int y, Direction direction, string cmd)
-        {
+        public void Should_Throw_Invalid_Coordinates_Exception(int x, int y, Direction direction, string cmd){
             var p = new Plateau(5, 5);
             Assert.ThrowsException<InvalidCoordinateException>(() => p.AddRover(new Rover(x, y, direction, cmd)));
         }
 
         [Theory]
         [InlineData(1, 2, Direction.N, "LMLMLMLMM")]
-        public void Should_Be_Valid_Rover_Coordinates_On_Plateau(int x, int y, Direction direction, string cmd)
-        {
+        public void Should_Be_Valid_Rover_Coordinates_On_Plateau(int x, int y, Direction direction, string cmd){
             //Arrange
             var p = new Plateau(5, 5);
 
@@ -44,17 +41,22 @@ namespace rovers.tests
 
         [Theory]
         [InlineData(5, 5)]
-        public void Should_Be_Throw_Rover_Cannot_Found_Exception(int x, int y)
-        {
+        public void Should_Be_Throw_Rover_Cannot_Found_Exception(int x, int y){
             var p = new Plateau(x, y);
             IManager manager = new RoverManager(p);
             Assert.ThrowsException<RoverCannotFoundException>(() => manager.Run());
         }
 
         [Theory]
+        [InlineData(5, 5, Direction.E, "ADASDAS123DAS")]
+        public void Should_Be_Throw_Invalid_Argument_Exception(int x, int y, Direction direction, string cmd){
+            var p = new Plateau(x, y);
+            Assert.ThrowsException<InvalidArgumentException>(() => p.AddRover(new Rover(x, y, direction, cmd)));
+        }
+
+        [Theory]
         [InlineData(5, 5)]
-        public void Should_Be_Valid_Coordinates_For_All_Rovers(int x, int y)
-        {
+        public void Should_Be_Valid_Coordinates_For_All_Rovers(int x, int y){
             //Arrange
             var p = new Plateau(x, y);
             var rover1 = new Rover(1, 2, Direction.N, "LMLMLMLMM");
