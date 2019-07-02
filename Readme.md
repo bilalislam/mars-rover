@@ -1,6 +1,4 @@
-## Rover Matris
-<img src="./mars-rover.jpg" alt="mars-rover"> 
-
+## Mars Rover
 
 ## How to works
 1. All the points to be aware of each other while drawing the plateau

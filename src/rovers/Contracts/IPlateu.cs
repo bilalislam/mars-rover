@@ -2,6 +2,6 @@
 {
     public interface IPlateu
     {
-        void AddRover(Rover rover);
+        Rover AddRover(Rover rover);
     }
 }

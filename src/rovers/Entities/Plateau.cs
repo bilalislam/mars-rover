@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using rovers.Exceptions;
 
 namespace rovers
 {
@@ -16,7 +17,8 @@ namespace rovers
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public Plateau(int x, int y){
+        public Plateau(int x, int y)
+        {
             this._x = x;
             this._y = y;
             this._points = new Point[x + 1, y + 1];
@@ -29,17 +31,22 @@ namespace rovers
         /// Draw all space of platau
         /// all point knows all neighbours of itself
         /// </summary>
-        private void Init(){
-            for (int i = 0; i <= this._x; i++){
-                for (int j = 0; j <= this._y; j++){
+        private void Init()
+        {
+            for (int i = 0; i <= this._x; i++)
+            {
+                for (int j = 0; j <= this._y; j++)
+                {
                     var point = new Point(i, j);
                     this._points[i, j] = point;
-                    if (j > 0){
+                    if (j > 0)
+                    {
                         point.Bottom = this._points[i, j - 1];
                         point.Bottom.Upper = point;
                     }
 
-                    if (i > 0){
+                    if (i > 0)
+                    {
                         point.Left = this._points[i - 1, j];
                         point.Left.Right = point;
                     }
@@ -47,14 +54,19 @@ namespace rovers
             }
         }
 
-        public void AddRover(Rover rover){
-            if (!(rover.X > this._x || rover.X < 0 || rover.Y > this._y || rover.Y < 0)){
+        public Rover AddRover(Rover rover)
+        {
+            if (!(rover.X > this._x || rover.X < 0 || rover.Y > this._y || rover.Y < 0))
+            {
                 this.Rovers.Add(rover);
                 SetRoverPoint(rover, rover.X, rover.Y);
             }
-            else{
-                throw new Exception("Invalid rover co-ordinates !");
+            else
+            {
+                throw new InvalidCoordinateException("Invalid rover co-ordinates !");
             }
+
+            return rover;
         }
 
         /// <summary>
@@ -64,15 +76,19 @@ namespace rovers
         /// <param name="rover"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        private void SetRoverPoint(Rover rover, int x, int y){
+        private void SetRoverPoint(Rover rover, int x, int y)
+        {
             rover.CurrentPoint = this._points[x, y];
             rover.CurrentPoint.RoverOn = rover;
         }
 
-        public override string ToString(){
+        public override string ToString()
+        {
             var sb = new StringBuilder();
-            for (int i = 0; i <= this._x; i++){
-                for (int j = 0; j <= this._y; j++){
+            for (int i = 0; i <= this._x; i++)
+            {
+                for (int j = 0; j <= this._y; j++)
+                {
                     sb.AppendLine($"x : {this._points[i, j].X} " +
                                   $"y : {this._points[i, j].Y} " +
                                   $"rover: {this._points[i, j].RoverOn?.CurrentPoint.X} <-> " +

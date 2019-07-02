@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using rovers.Exceptions;
 
 namespace rovers
 {
@@ -13,7 +14,7 @@ namespace rovers
 
         public void Run(){
             if (!_plateau.Rovers.Any()){
-                throw new Exception("Any rovers can not found !");
+                throw new RoverCannotFoundException("Any rovers can not found !");
             }
 
             var maxTaskCount = _plateau.Rovers.Max(x => x.Command).Length;
