@@ -56,6 +56,41 @@ namespace rovers.tests
 
         [Theory]
         [InlineData(5, 5)]
+        public void Should_Be_Throw_Crush_Exception(int x, int y){
+            //Arrange
+            var p = new Plateau(x, y);
+            var rover1 = new Rover(3, 0, Direction.W, "MM");
+            var rover2 = new Rover(1, 2, Direction.N, "LLMM");
+
+            //Act
+            p.AddRover(rover1);
+            p.AddRover(rover2);
+
+            IManager manager = new RoverManager(p);
+            //Assert
+            Assert.ThrowsException<CrushDetectedException>(() => manager.Run());
+        }
+
+
+        [Theory]
+        [InlineData(5, 5)]
+        public void Should_Be_Throw_Out_of_Plateau_Exception(int x, int y){
+            //Arrange
+            var p = new Plateau(x, y);
+            var rover1 = new Rover(3, 0, Direction.W, "MMMM");
+            var rover2 = new Rover(1, 2, Direction.N, "LLMMM");
+
+            //Act
+            p.AddRover(rover1);
+            p.AddRover(rover2);
+
+            IManager manager = new RoverManager(p);
+            //Assert
+            Assert.ThrowsException<OutOfPlateauException>(() => manager.Run());
+        }
+
+        [Theory]
+        [InlineData(5, 5)]
         public void Should_Be_Valid_Coordinates_For_All_Rovers(int x, int y){
             //Arrange
             var p = new Plateau(x, y);

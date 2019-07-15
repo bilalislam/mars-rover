@@ -17,7 +17,7 @@ namespace rovers
                 throw new RoverCannotFoundException("Any rovers can not found !");
             }
 
-            var maxTaskCount = _plateau.Rovers.Max(x => x.Command).Length;
+            var maxTaskCount = _plateau.Rovers.Max(x => x.Command.Length);
             for (int i = 0; i < maxTaskCount; i++){
                 foreach (var rover in _plateau.Rovers){
                     rover.RunCommand(i);
