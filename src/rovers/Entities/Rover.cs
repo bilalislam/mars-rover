@@ -32,9 +32,10 @@ namespace rovers
         ///  run commands concurrently
         /// </summary>
         /// <param name="index"></param>
-        public Rover RunCommand(int index){
-            if (this.Command.Length > index){
-                switch (Command[index]){
+        /// <param name="plateau"></param>
+        public Rover RunCommand(){
+            foreach (var t in Command){
+                switch (t){
                     case 'L':
                         TurnLeft();
                         break;
