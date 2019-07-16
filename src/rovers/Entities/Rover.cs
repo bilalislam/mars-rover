@@ -28,11 +28,6 @@ namespace rovers
                 throw new InvalidArgumentException("Invalid input");
         }
 
-        /// <summary>
-        ///  run commands concurrently
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="plateau"></param>
         public Rover RunCommand(){
             foreach (var t in Command){
                 switch (t){

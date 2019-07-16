@@ -29,7 +29,7 @@ namespace rovers
                 Console.WriteLine($"rover {i} : {_plateau.Rovers[i - 1]}");
             }
 
-            //Console.WriteLine($"plateau matris : \n {_plateau}");
+            Console.WriteLine($"plateau matris : \n {_plateau}");
         }
     }
 }

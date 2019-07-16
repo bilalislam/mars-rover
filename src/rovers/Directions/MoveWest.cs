@@ -3,11 +3,12 @@
     public class MoveWest : IMove
     {
         public Rover Execute(Rover rover){
-            if (rover.CurrentPoint.IsRip && rover.CurrentPoint.Direction == Direction.W)
-                return rover;
-
             if (rover.CurrentPoint.Left == null){
                 rover.CurrentPoint.IsRip = true;
+                return rover;
+            }
+
+            if (rover.CurrentPoint.Left.IsRip && rover.Direction == Direction.W){
                 return rover;
             }
 
