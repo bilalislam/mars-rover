@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LessonProgramSheet
+namespace Scheduler
 {
     class Program
     {
@@ -11,10 +11,13 @@ namespace LessonProgramSheet
         static void Main(string[] args)
         {
             var lessons = GetAllLessons();
-            
+
             Sheet sht = new Sheet(5, 5);
-            sht.AddClass(ClassRoom.Load("1A").SetLessonList(lessons));
-            sht.AddClass(ClassRoom.Load("2B").SetLessonList(lessons));
+            sht.AddClass(ClassRoom.Load("1A").SetSheet(sht).SetLessonList(lessons));
+            sht.AddClass(ClassRoom.Load("2B").SetSheet(sht).SetLessonList(lessons));
+
+            Scheduler scheduler = new Scheduler(sht);
+            scheduler.Draw();
         }
 
         /// <summary>
@@ -44,7 +47,7 @@ namespace LessonProgramSheet
                 {
                     Name = "Tarih",
                     TotalHour = 3,
-                    Teacher = new List<string>()
+                    Teachers = new List<string>()
                     {
                         "Sultan"
                     }
@@ -54,7 +57,7 @@ namespace LessonProgramSheet
                 {
                     Name = "Coğrafya",
                     TotalHour = 3,
-                    Teacher = new List<string>()
+                    Teachers = new List<string>()
                     {
                         "Esra"
                     }
@@ -64,7 +67,7 @@ namespace LessonProgramSheet
                 {
                     Name = "Türkçe",
                     TotalHour = 4,
-                    Teacher = new List<string>()
+                    Teachers = new List<string>()
                     {
                         "Salih",
                         "Özlem"
@@ -75,7 +78,7 @@ namespace LessonProgramSheet
                 {
                     Name = "Matematik",
                     TotalHour = 4,
-                    Teacher = new List<string>()
+                    Teachers = new List<string>()
                     {
                         "Özlem",
                         "Mehmet"
@@ -86,7 +89,7 @@ namespace LessonProgramSheet
                 {
                     Name = "Beden",
                     TotalHour = 3,
-                    Teacher = new List<string>()
+                    Teachers = new List<string>()
                     {
                         "Alper",
                     }
@@ -95,7 +98,7 @@ namespace LessonProgramSheet
                 {
                     Name = "Fizik",
                     TotalHour = 2,
-                    Teacher = new List<string>()
+                    Teachers = new List<string>()
                     {
                         "Esra"
                     }
@@ -104,7 +107,7 @@ namespace LessonProgramSheet
                 {
                     Name = "Kimya",
                     TotalHour = 2,
-                    Teacher = new List<string>()
+                    Teachers = new List<string>()
                     {
                         "Sultan"
                     }
@@ -113,7 +116,7 @@ namespace LessonProgramSheet
                 {
                     Name = "Resim",
                     TotalHour = 2,
-                    Teacher = new List<string>()
+                    Teachers = new List<string>()
                     {
                         "Alper",
                     }
@@ -122,7 +125,7 @@ namespace LessonProgramSheet
                 {
                     Name = "Biyoloji",
                     TotalHour = 2,
-                    Teacher = new List<string>()
+                    Teachers = new List<string>()
                     {
                         "Salih"
                     }

@@ -1,12 +1,13 @@
-using System;
 using System.Collections.Generic;
 
-namespace LessonProgramSheet
+namespace Scheduler
 {
     public class ClassRoom
     {
         public string Name { get; private set; }
         public Queue<Lesson> Lessons { get; private set; }
+        public Sheet Sheet { get; private set; }
+
 
         private ClassRoom(string name)
         {
@@ -29,36 +30,77 @@ namespace LessonProgramSheet
             return this;
         }
 
+        public ClassRoom SetSheet(Sheet sht)
+        {
+            Sheet = sht;
+            return this;
+        }
+
         public void Draw()
         {
             while (this.Lessons.Count > 0)
             {
-                var lesson = Lessons.Dequeue();
-                lesson.Hour = lesson.Hour switch
-                {
-                    0 => 2,
-                    1 => 1,
-                    _ => 2
-                };
+                var lesson = DequeueWithCalculatedHour();
+                var point = Sheet.Points[0, 0];
 
-                //pointlere yerleştir
-                // Eger çakışma varsa dersin başka hocası var ise onu kullan
-                // Çakışma var ama hoca yok ise enqueue yap
-                // Dersin birden fazla hocası var o sınıf için daha önce alınan ders ise diger yarısıdır aynı hocadan devam et.
-                // Dersin hocalarının oranları - Group & Min
-                for (int j = 0; j < lesson.Hour; j++)
-                {
-                    Console.WriteLine(lesson.Name);
-                }
+                SetLesson(point, lesson);
+            }
+        }
 
-                //engueue
-                lesson.Used += lesson.Hour;
-                if (lesson.Used != lesson.TotalHour)
+        /// <summary>
+        ///  1. çakışma varsa
+        ///  1.1 farklı hoca varsa onu kullan ( group and min)' e gore dagılım yap (şimdilik random !)
+        ///  1.2 yoksa sadece enqueue et o zaman tekrar başka bir uygun ders bulana kadar Dequeue & Enqueue etmem lazım yani recursive
+        ///  2. çakışma yoksa
+        ///  2.1 ders ve hoca farklı demektir set et yukarda ki gibi ve  bu işlem ise recursive olabilir.
+        ///  3. Birden fazla hocası olan derslerde sınıf bazında hangi hoca ile başlandıysa onun ile bitirilmesi gerekir. - nok
+        ///  4. Farklı dersleri veren aynı hocaların kendi diger dersleri ile çakışmaması gerekir. - ignored 
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="lesson"></param>
+        public void SetLesson(Point point, Lesson lesson)
+        {
+            foreach (var lsn in point.Lessons)
+            {
+                if (lsn.Name == lesson.Name && !(lesson.Teachers.Count > 1))
                 {
-                    lesson.Hour = lesson.TotalHour - lesson.Used;
                     Lessons.Enqueue(lesson);
+                    SetLesson(point, DequeueWithCalculatedHour());
+                }
+                else if (lsn.Name == lesson.Name && lesson.Teachers.Count > 1)
+                {
+                    point.AddLesson(lesson
+                        .ChangeTeacherExtractWith(lsn.TeacherName));
+                    this.EnqueueIfRemained(lesson);
+                }
+                else
+                {
+                    point.AddLesson(lesson
+                        .SetTeacherName());
+                    this.EnqueueIfRemained(lesson);
                 }
             }
+        }
+
+        private Lesson DequeueWithCalculatedHour()
+        {
+            var lesson = Lessons.Dequeue();
+            lesson.Hour = lesson.Hour switch
+            {
+                0 => 2,
+                1 => 1,
+                _ => 2
+            };
+
+            return lesson;
+        }
+
+        private void EnqueueIfRemained(Lesson lesson)
+        {
+            lesson.Used += lesson.Hour;
+            if (lesson.Used == lesson.TotalHour) return;
+            lesson.Hour = lesson.TotalHour - lesson.Used;
+            Lessons.Enqueue(lesson);
         }
     }
 }

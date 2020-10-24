@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 
-namespace LessonProgramSheet
+namespace Scheduler
 {
     public class Sheet
     {
-        private Point[,] Points { get; set; }
-        private List<ClassRoom> ClassRooms { get; set; }
+        public Point[,] Points { get; private set; }
+        public List<ClassRoom> ClassRooms { get; private set; }
 
         /// <summary>
         /// Weekly lessons program
