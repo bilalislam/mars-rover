@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Scheduler
 {
@@ -7,27 +8,35 @@ namespace Scheduler
         public string Name { get; private set; }
         public Queue<Lesson> Lessons { get; private set; }
         public Sheet Sheet { get; private set; }
+        public int TotalDailyLessonHour { get; private set; }
 
 
-        private ClassRoom(string name)
+        private ClassRoom(string name, Queue<Lesson> lessons)
         {
             this.Name = name;
+            this.Lessons = lessons;
         }
 
-        public static ClassRoom Load(string name)
+        /// <summary>
+        /// Business invariants
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="lessons"></param>
+        /// <returns></returns>
+        public static ClassRoom Load(string name, List<Lesson> lessons)
         {
-            return new ClassRoom(name);
+            return new ClassRoom(name, SetLessonList(lessons));
         }
 
-        public ClassRoom SetLessonList(List<Lesson> lessons)
+        private static Queue<Lesson> SetLessonList(List<Lesson> lessons)
         {
-            Lessons = new Queue<Lesson>();
+            var queueLessons = new Queue<Lesson>();
             foreach (var lesson in lessons)
             {
-                Lessons.Enqueue(lesson);
+                queueLessons.Enqueue(lesson);
             }
 
-            return this;
+            return queueLessons;
         }
 
         public ClassRoom SetSheet(Sheet sht)
@@ -38,12 +47,14 @@ namespace Scheduler
 
         public void Draw()
         {
-            while (this.Lessons.Count > 0)
+            for (int i = 0; i < Sheet.Points.Length; i++)
             {
-                var lesson = DequeueWithCalculatedHour();
-                var point = Sheet.Points[0, 0];
-
-                SetLesson(point, lesson);
+                for (int j = 0; j < Sheet.Points.Length; j++)
+                {
+                    var lesson = DequeueWithCalculatedHour();
+                    var point = Sheet.Points[i, j];
+                    SetLesson(point, lesson);
+                }
             }
         }
 
@@ -54,30 +65,57 @@ namespace Scheduler
         ///  2. çakışma yoksa
         ///  2.1 ders ve hoca farklı demektir set et yukarda ki gibi ve  bu işlem ise recursive olabilir.
         ///  3. Birden fazla hocası olan derslerde sınıf bazında hangi hoca ile başlandıysa onun ile bitirilmesi gerekir. - nok
-        ///  4. Farklı dersleri veren aynı hocaların kendi diger dersleri ile çakışmaması gerekir. - ignored 
+        ///  4. Farklı dersleri veren aynı hocaların kendi diger dersleri ile çakışmaması gerekir. - ignored
+        ///  5. Günlük ders saatleri 5 - nok
+        ///  6. Son kalan dersin saatinin de günlük ders saatine ayarlanması lazım bu da tekrar hesap gerektirir - nok
         /// </summary>
         /// <param name="point"></param>
         /// <param name="lesson"></param>
-        public void SetLesson(Point point, Lesson lesson)
+        private void SetLesson(Point point, Lesson lesson)
         {
-            foreach (var lsn in point.Lessons)
+            if (!point.Lessons.Any())
             {
-                if (lsn.Name == lesson.Name && !(lesson.Teachers.Count > 1))
+                point.AddLesson(lesson
+                    .SetTeacherName()
+                    .SetClassName(this.Name));
+
+                this.EnqueueIfRemained(lesson);
+            }
+            else
+            {
+                var currentLessons = new List<Lesson>();
+                currentLessons.AddRange(point.Lessons);
+
+                foreach (var lsn in currentLessons)
                 {
-                    Lessons.Enqueue(lesson);
-                    SetLesson(point, DequeueWithCalculatedHour());
-                }
-                else if (lsn.Name == lesson.Name && lesson.Teachers.Count > 1)
-                {
-                    point.AddLesson(lesson
-                        .ChangeTeacherExtractWith(lsn.TeacherName));
-                    this.EnqueueIfRemained(lesson);
-                }
-                else
-                {
-                    point.AddLesson(lesson
-                        .SetTeacherName());
-                    this.EnqueueIfRemained(lesson);
+                    if (lsn.ClassName == this.Name)
+                    {
+                        Lessons.Enqueue(lesson);
+                        continue;
+                        ;
+                    }
+
+                    if (lsn.Name == lesson.Name && !(lesson.Teachers.Count > 1))
+                    {
+                        Lessons.Enqueue(lesson);
+                        SetLesson(point, DequeueWithCalculatedHour());
+                    }
+                    else if (lsn.Name == lesson.Name && lesson.Teachers.Count > 1)
+                    {
+                        point.AddLesson(lesson
+                            .ChangeTeacherExtractWith(lsn.TeacherName)
+                            .SetClassName(this.Name));
+
+                        this.EnqueueIfRemained(lesson);
+                    }
+                    else
+                    {
+                        point.AddLesson(lesson
+                            .SetTeacherName()
+                            .SetClassName(this.Name));
+
+                        this.EnqueueIfRemained(lesson);
+                    }
                 }
             }
         }

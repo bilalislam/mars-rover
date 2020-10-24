@@ -12,6 +12,7 @@ namespace Scheduler
         public int Used { get; set; }
         public List<string> Teachers { get; set; }
         public string TeacherName { get; private set; }
+        public string ClassName { get; private set; }
 
         public Lesson ChangeTeacherExtractWith(string name)
         {
@@ -25,6 +26,12 @@ namespace Scheduler
         public Lesson SetTeacherName()
         {
             this.TeacherName = this.Teachers.First();
+            return this;
+        }
+
+        public Lesson SetClassName(string name)
+        {
+            ClassName = name;
             return this;
         }
     }

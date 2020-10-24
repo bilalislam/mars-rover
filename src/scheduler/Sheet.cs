@@ -33,12 +33,6 @@ namespace Scheduler
                         point.Bottom = this.Points[i, j - 1];
                         point.Bottom.Upper = point;
                     }
-
-                    if (i > 0)
-                    {
-                        point.Left = this.Points[i - 1, j];
-                        point.Left.Right = point;
-                    }
                 }
             }
         }

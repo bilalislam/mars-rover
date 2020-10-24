@@ -12,9 +12,9 @@ namespace Scheduler
         {
             var lessons = GetAllLessons();
 
-            Sheet sht = new Sheet(5, 5);
-            sht.AddClass(ClassRoom.Load("1A").SetSheet(sht).SetLessonList(lessons));
-            sht.AddClass(ClassRoom.Load("2B").SetSheet(sht).SetLessonList(lessons));
+            Sheet sht = new Sheet(1, 1);
+            sht.AddClass(ClassRoom.Load("1A", lessons).SetSheet(sht));
+            sht.AddClass(ClassRoom.Load("2B", lessons).SetSheet(sht));
 
             Scheduler scheduler = new Scheduler(sht);
             scheduler.Draw();
