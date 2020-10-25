@@ -9,8 +9,8 @@ namespace Scheduler
             var lessons = GetAllLessons();
 
             Sheet sht = new Sheet(0, 2);
-            sht.AddClass(ClassRoom.Load("1A").SetLessonList(lessons).SetSheet(sht));
-            sht.AddClass(ClassRoom.Load("2B").SetLessonList(lessons).SetSheet(sht));
+            sht.AddClass(ClassRoom.Load("1A", 3).SetLessonList(GetAllLessons()).SetSheet(sht));
+            sht.AddClass(ClassRoom.Load("2B", 3).SetLessonList(GetAllLessons()).SetSheet(sht));
 
             Scheduler scheduler = new Scheduler(sht);
             scheduler.Draw();
@@ -45,7 +45,8 @@ namespace Scheduler
                     TotalHour = 3,
                     Teachers = new List<string>()
                     {
-                        "Sultan"
+                        "Sultan",
+                        "Bilal"
                     }
                 },
 
@@ -58,7 +59,7 @@ namespace Scheduler
                 //         "Esra"
                 //     }
                 // },
-
+                //
                 // new Lesson()
                 // {
                 //     Name = "Türkçe",

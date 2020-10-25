@@ -17,9 +17,9 @@ namespace Scheduler
         public Lesson ChangeTeacherExtractWith(string name)
         {
             var rnd = new Random();
-            this.Teachers = this.Teachers.Where(x => x != name).ToList();
-            var index = rnd.Next(1, this.Teachers.Count());
-            this.TeacherName = this.Teachers[index - 1];
+            var teachers = this.Teachers.Where(x => x != name).ToList();
+            var index = rnd.Next(1, teachers.Count);
+            this.TeacherName = teachers[index - 1];
             return this;
         }
 

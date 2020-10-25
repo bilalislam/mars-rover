@@ -4,23 +4,26 @@ using System.Linq;
 
 namespace Scheduler
 {
+    /// <summary>
+    /// Building blocks of model driven design !!!
+    /// </summary>
     public class ClassRoom
     {
         public string Name { get; private set; }
         public Queue<Lesson> Lessons { get; private set; }
         public Sheet Sheet { get; private set; }
+        public int CurrentDailyHours { get; private set; }
         public int TotalDailyHours { get; private set; }
 
-
-        private ClassRoom(string name)
+        private ClassRoom(string name, int totalDailyHours)
         {
             this.Name = name;
+            this.TotalDailyHours = totalDailyHours;
         }
 
-
-        public static ClassRoom Load(string name)
+        public static ClassRoom Load(string name, int totalDailyHours)
         {
-            return new ClassRoom(name);
+            return new ClassRoom(name, totalDailyHours);
         }
 
         /// <summary>
@@ -77,10 +80,9 @@ namespace Scheduler
                     }
                 }
 
-                this.TotalDailyHours = 0;
+                this.CurrentDailyHours = 0;
             }
         }
-
 
         /// <summary>
         ///  1. çakışma varsa
@@ -94,9 +96,11 @@ namespace Scheduler
         ///  6. Son kalan dersin saatinin de günlük ders saatine ayarlanması lazım bu da tekrar hesap gerektirir - ok
         ///  7. Sorun dersler parçalanıyor. - ignored
         ///  8. Hocaların verdiği toplam ders saatleri - nok
-        ///  9. ders saatleri  farklı ama sınıf isimleri aynı olmaması lazım o da aynı gelmiş
-        ///  10. eksik dersler gördüm
-        ///  11. 2b sınıfının neden 5 saatten fazla dersi var ? 
+        ///  9. ders saatleri  farklı ama sınıf isimleri aynı olmaması lazım o da aynı gelmiş 12. madde ?
+        ///  10. eksik dersler gördüm - ok
+        ///  11. 2b sınıfının neden 5 saatten fazla dersi var ? - 12. madde ? 
+        ///  12. birden fazla hoca da aynı anda aynı dersi verdikleri zaman gelen aynı ders ignore edilmesi lazım çünkü hocaların hiçbiri müsait değil
+        ///  13. rule engine must !! 
         /// </summary>
         /// <param name="point"></param>
         /// <param name="lesson"></param>
@@ -115,25 +119,24 @@ namespace Scheduler
                 var currentLessons = new List<Lesson>();
                 currentLessons.AddRange(point.Lessons);
 
-                foreach (var lsn in currentLessons)
+                
+                foreach (var currentLesson in currentLessons)
                 {
-                    if (lsn.ClassName == this.Name)
+                    if (currentLesson.ClassName == this.Name)
                     {
-                        this.TotalDailyHours -= lesson.Hour;
                         this.EnqueueIfRemained(lesson, false);
                         continue;
                     }
 
-                    if (lsn.Name == lesson.Name && !(lesson.Teachers.Count > 1))
+                    if (currentLesson.Name == lesson.Name && !(lesson.Teachers.Count > 1))
                     {
-                        this.TotalDailyHours -= lesson.Hour;
                         this.EnqueueIfRemained(lesson, false);
                         SetLesson(point, DequeueWithCalculatedHour());
                     }
-                    else if (lsn.Name == lesson.Name && lesson.Teachers.Count > 1)
+                    else if (currentLesson.Name == lesson.Name && lesson.Teachers.Count > 1)
                     {
                         point.AddLesson(lesson
-                            .ChangeTeacherExtractWith(lsn.TeacherName)
+                            .ChangeTeacherExtractWith(currentLesson.TeacherName)
                             .SetClassName(this.Name));
 
                         this.EnqueueIfRemained(lesson);
@@ -165,18 +168,21 @@ namespace Scheduler
                 _ => 2
             };
 
-            var remainedHours = Math.Abs(this.TotalDailyHours - 5);
+            var remainedHours = Math.Abs(this.CurrentDailyHours - this.TotalDailyHours);
             if (remainedHours < lesson.Hour && remainedHours != 0)
                 lesson.Hour = remainedHours;
 
-            this.TotalDailyHours += lesson.Hour;
+            this.CurrentDailyHours += lesson.Hour;
             return lesson;
         }
 
         private void EnqueueIfRemained(Lesson lesson, bool isUsed = true)
         {
             if (!isUsed)
+            {
+                this.CurrentDailyHours -= lesson.Hour;
                 lesson.Hour = 0;
+            }
 
             lesson.Used += lesson.Hour;
             if (lesson.Used == lesson.TotalHour) return;
