@@ -40,6 +40,6 @@ namespace Scheduler
         public void AddClass(ClassRoom classRoom)
         {
             this.ClassRooms.Add(classRoom);
-        }l
+        }
     }
 }
