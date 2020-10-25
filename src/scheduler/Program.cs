@@ -4,17 +4,13 @@ namespace Scheduler
 {
     class Program
     {
-        /// <summary>
-        /// lesson's hours must be divide
-        /// </summary>
-        /// <param name="args"></param>
         static void Main(string[] args)
         {
             var lessons = GetAllLessons();
 
-            Sheet sht = new Sheet(1, 1);
-            sht.AddClass(ClassRoom.Load("1A", lessons).SetSheet(sht));
-            sht.AddClass(ClassRoom.Load("2B", lessons).SetSheet(sht));
+            Sheet sht = new Sheet(0, 2);
+            sht.AddClass(ClassRoom.Load("1A").SetLessonList(lessons).SetSheet(sht));
+            sht.AddClass(ClassRoom.Load("2B").SetLessonList(lessons).SetSheet(sht));
 
             Scheduler scheduler = new Scheduler(sht);
             scheduler.Draw();
@@ -53,83 +49,83 @@ namespace Scheduler
                     }
                 },
 
-                new Lesson()
-                {
-                    Name = "Coğrafya",
-                    TotalHour = 3,
-                    Teachers = new List<string>()
-                    {
-                        "Esra"
-                    }
-                },
+                // new Lesson()
+                // {
+                //     Name = "Coğrafya",
+                //     TotalHour = 3,
+                //     Teachers = new List<string>()
+                //     {
+                //         "Esra"
+                //     }
+                // },
 
-                new Lesson()
-                {
-                    Name = "Türkçe",
-                    TotalHour = 4,
-                    Teachers = new List<string>()
-                    {
-                        "Salih",
-                        "Özlem"
-                    }
-                },
-
-                new Lesson()
-                {
-                    Name = "Matematik",
-                    TotalHour = 4,
-                    Teachers = new List<string>()
-                    {
-                        "Özlem",
-                        "Mehmet"
-                    }
-                },
-
-                new Lesson()
-                {
-                    Name = "Beden",
-                    TotalHour = 3,
-                    Teachers = new List<string>()
-                    {
-                        "Alper",
-                    }
-                },
-                new Lesson()
-                {
-                    Name = "Fizik",
-                    TotalHour = 2,
-                    Teachers = new List<string>()
-                    {
-                        "Esra"
-                    }
-                },
-                new Lesson()
-                {
-                    Name = "Kimya",
-                    TotalHour = 2,
-                    Teachers = new List<string>()
-                    {
-                        "Sultan"
-                    }
-                },
-                new Lesson()
-                {
-                    Name = "Resim",
-                    TotalHour = 2,
-                    Teachers = new List<string>()
-                    {
-                        "Alper",
-                    }
-                },
-                new Lesson()
-                {
-                    Name = "Biyoloji",
-                    TotalHour = 2,
-                    Teachers = new List<string>()
-                    {
-                        "Salih"
-                    }
-                }
+                // new Lesson()
+                // {
+                //     Name = "Türkçe",
+                //     TotalHour = 4,
+                //     Teachers = new List<string>()
+                //     {
+                //         "Salih",
+                //         "Özlem"
+                //     }
+                // },
+                //
+                // new Lesson()
+                // {
+                //     Name = "Matematik",
+                //     TotalHour = 4,
+                //     Teachers = new List<string>()
+                //     {
+                //         "Özlem",
+                //         "Mehmet"
+                //     }
+                // },
+                //
+                // new Lesson()
+                // {
+                //     Name = "Beden",
+                //     TotalHour = 3,
+                //     Teachers = new List<string>()
+                //     {
+                //         "Alper",
+                //     }
+                // },
+                // new Lesson()
+                // {
+                //     Name = "Fizik",
+                //     TotalHour = 2,
+                //     Teachers = new List<string>()
+                //     {
+                //         "Esra"
+                //     }
+                // },
+                // new Lesson()
+                // {
+                //     Name = "Kimya",
+                //     TotalHour = 2,
+                //     Teachers = new List<string>()
+                //     {
+                //         "Sultan"
+                //     }
+                // },
+                // new Lesson()
+                // {
+                //     Name = "Resim",
+                //     TotalHour = 2,
+                //     Teachers = new List<string>()
+                //     {
+                //         "Alper",
+                //     }
+                // },
+                // new Lesson()
+                // {
+                //     Name = "Biyoloji",
+                //     TotalHour = 2,
+                //     Teachers = new List<string>()
+                //     {
+                //         "Salih"
+                //     }
+                // }
             };
         }
     }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Scheduler
@@ -11,6 +12,9 @@ namespace Scheduler
             _sheet = sheet;
         }
 
+        /// <summary>
+        /// TODO:Neden lesson'ların degerli aynı incele 2d arraylee ozgu bir durum mu bu ???
+        /// </summary>
         public void Draw()
         {
             if (!_sheet.ClassRooms.Any())

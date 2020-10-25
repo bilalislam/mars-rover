@@ -18,7 +18,7 @@ namespace Scheduler
         {
             var rnd = new Random();
             this.Teachers = this.Teachers.Where(x => x != name).ToList();
-            var index = rnd.Next(0, this.Teachers.Count());
+            var index = rnd.Next(1, this.Teachers.Count());
             this.TeacherName = this.Teachers[index - 1];
             return this;
         }

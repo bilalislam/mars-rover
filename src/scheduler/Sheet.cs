@@ -14,8 +14,8 @@ namespace Scheduler
         /// <param name="y"></param>
         public Sheet(int x, int y)
         {
-            Points = new Point[x + 1, y + 1];
             ClassRooms = new List<ClassRoom>();
+            Points = new Point[x + 1, y + 1];
 
             Init(x, y);
         }
@@ -26,7 +26,7 @@ namespace Scheduler
             {
                 for (int j = 0; j <= y; j++)
                 {
-                    var point = new Point();
+                    var point = new Point(i, j);
                     Points[i, j] = point;
                     if (j > 0)
                     {
@@ -40,6 +40,6 @@ namespace Scheduler
         public void AddClass(ClassRoom classRoom)
         {
             this.ClassRooms.Add(classRoom);
-        }
+        }l
     }
 }
