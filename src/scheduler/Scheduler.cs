@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Scheduler
@@ -13,7 +12,8 @@ namespace Scheduler
         }
 
         /// <summary>
-        /// TODO:Neden lesson'ların degerli aynı incele 2d arraylee ozgu bir durum mu bu ???
+        /// TODO:Neden lesson'ların degerli aynı incele ?
+        /// Answer : Aynı lesson'lar queue ve point list kullanılıyor yeni instance almak gerekir.
         /// </summary>
         public void Draw()
         {

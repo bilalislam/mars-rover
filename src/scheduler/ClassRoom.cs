@@ -42,6 +42,7 @@ namespace Scheduler
             Lessons = new Queue<Lesson>();
             foreach (var lesson in lessons)
             {
+                lesson.SetClassName(this.Name);
                 Lessons.Enqueue(lesson);
             }
 
@@ -100,7 +101,15 @@ namespace Scheduler
         ///  10. eksik dersler gördüm - ok
         ///  11. 2b sınıfının neden 5 saatten fazla dersi var ? - 12. madde ? 
         ///  12. birden fazla hoca da aynı anda aynı dersi verdikleri zaman gelen aynı ders ignore edilmesi lazım çünkü hocaların hiçbiri müsait değil
-        ///  13. rule engine must !! 
+        ///  13. rule engine must !!
+        ///
+        /// 1. 1A sınıfı dersi yayarken kendisi ile çakışabilir
+        /// 2. 1a ve 2b nin dersleri çakışabilir.
+        /// 3. birden fazla dersi veren hocalar kendileri ile çakışabilir
+        /// fazla hocası olan aynı dersleri dagıt
+        /// hocaları aynı olan farklı dersleri dagıt
+        /// hocaların birbirine yakın ders saat vermelerini sagla
+        /// 4. hangi sınıf hangi hoca ile başladıysa onunda tamamla
         /// </summary>
         /// <param name="point"></param>
         /// <param name="lesson"></param>
@@ -109,7 +118,6 @@ namespace Scheduler
             if (!point.Lessons.Any())
             {
                 point.AddLesson(lesson
-                    .SetTeacherName()
                     .SetClassName(this.Name));
 
                 this.EnqueueIfRemained(lesson);
@@ -119,36 +127,34 @@ namespace Scheduler
                 var currentLessons = new List<Lesson>();
                 currentLessons.AddRange(point.Lessons);
 
-                
-                foreach (var currentLesson in currentLessons)
+                var valid = true;
+                if (currentLessons.Any(x => x.ClassName == lesson.ClassName))
                 {
-                    if (currentLesson.ClassName == this.Name)
-                    {
-                        this.EnqueueIfRemained(lesson, false);
-                        continue;
-                    }
+                    this.EnqueueIfRemained(lesson, false);
+                    return;
+                }
 
-                    if (currentLesson.Name == lesson.Name && !(lesson.Teachers.Count > 1))
-                    {
-                        this.EnqueueIfRemained(lesson, false);
-                        SetLesson(point, DequeueWithCalculatedHour());
-                    }
-                    else if (currentLesson.Name == lesson.Name && lesson.Teachers.Count > 1)
-                    {
-                        point.AddLesson(lesson
-                            .ChangeTeacherExtractWith(currentLesson.TeacherName)
-                            .SetClassName(this.Name));
+                if (currentLessons.Any(x => x.Name == lesson.Name))
+                {
+                    valid = false;
+                    this.EnqueueIfRemained(lesson, false);
+                    SetLesson(point, DequeueWithCalculatedHour());
+                }
 
-                        this.EnqueueIfRemained(lesson);
-                    }
-                    else
-                    {
-                        point.AddLesson(lesson
-                            .SetTeacherName()
-                            .SetClassName(this.Name));
 
-                        this.EnqueueIfRemained(lesson);
-                    }
+                if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName))
+                {
+                    valid = false;
+                    this.EnqueueIfRemained(lesson, false);
+                    SetLesson(point, DequeueWithCalculatedHour());
+                }
+
+                if (valid)
+                {
+                    point.AddLesson(lesson
+                        .SetClassName(this.Name));
+
+                    this.EnqueueIfRemained(lesson);
                 }
             }
         }
@@ -161,16 +167,17 @@ namespace Scheduler
         private Lesson DequeueWithCalculatedHour()
         {
             var lesson = Lessons.Dequeue();
-            lesson.Hour = lesson.Hour switch
+            var hour = lesson.Hour switch
             {
                 0 => 2,
                 1 => 1,
                 _ => 2
             };
 
+            lesson.SetHour(hour);
             var remainedHours = Math.Abs(this.CurrentDailyHours - this.TotalDailyHours);
             if (remainedHours < lesson.Hour && remainedHours != 0)
-                lesson.Hour = remainedHours;
+                lesson.SetHour(remainedHours);
 
             this.CurrentDailyHours += lesson.Hour;
             return lesson;
@@ -181,12 +188,12 @@ namespace Scheduler
             if (!isUsed)
             {
                 this.CurrentDailyHours -= lesson.Hour;
-                lesson.Hour = 0;
+                lesson.SetHour(0);
             }
 
-            lesson.Used += lesson.Hour;
+            lesson.SumUsed(lesson.Hour);
             if (lesson.Used == lesson.TotalHour) return;
-            lesson.Hour = lesson.TotalHour - lesson.Used;
+            lesson.SetHour(lesson.TotalHour - lesson.Used);
             Lessons.Enqueue(lesson);
         }
     }
