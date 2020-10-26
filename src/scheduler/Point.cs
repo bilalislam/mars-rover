@@ -37,10 +37,5 @@ namespace Scheduler
             if (lesson.Hour > 1)
                 this.Upper?.Lessons.Add(lesson);
         }
-
-        public List<string> GetTeachers()
-        {
-            return Lessons.Select(lesson => lesson.TeacherName).ToList();
-        }
     }
 }
