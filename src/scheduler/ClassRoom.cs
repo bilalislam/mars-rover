@@ -92,25 +92,17 @@ namespace Scheduler
         ///  2. çakışma yoksa
         ///  2.1 ders ve hoca farklı demektir set et yukarda ki gibi ve  bu işlem ise recursive olabilir. - ok
         ///  3. Birden fazla hocası olan derslerde sınıf bazında hangi hoca ile başlandıysa onun ile bitirilmesi gerekir. - ignored
-        ///  4. Farklı dersleri veren aynı hocaların kendi diger dersleri ile çakışmaması gerekir. - ignored
+        ///  4. Farklı dersleri veren aynı hocaların kendi diger dersleri ile çakışmaması gerekir. - ok
         ///  5. Günlük ders saatleri 5 - ok
         ///  6. Son kalan dersin saatinin de günlük ders saatine ayarlanması lazım bu da tekrar hesap gerektirir - ok
         ///  7. Sorun dersler parçalanıyor. - ignored
         ///  8. Hocaların verdiği toplam ders saatleri - nok
-        ///  9. ders saatleri  farklı ama sınıf isimleri aynı olmaması lazım o da aynı gelmiş 12. madde ?
+        ///  9. ders saatleri  farklı ama sınıf isimleri aynı olmaması lazım o da aynı gelmiş 12. madde ? - ok 
         ///  10. eksik dersler gördüm - ok
-        ///  11. 2b sınıfının neden 5 saatten fazla dersi var ? - 12. madde ? 
+        ///  11. 2b sınıfının neden 5 saatten fazla dersi var ? - 12. madde ? - ok
         ///  12. birden fazla hoca da aynı anda aynı dersi verdikleri zaman gelen aynı ders ignore edilmesi lazım çünkü hocaların hiçbiri müsait değil
-        ///  13. rule engine must !!
-        ///
-        /// 1. 1A sınıfı dersi yayarken kendisi ile çakışabilir
-        /// 2. 1a ve 2b nin dersleri çakışabilir.
-        /// 3. birden fazla dersi veren hocalar kendileri ile çakışabilir
-        /// fazla hocası olan aynı dersleri dagıt
-        /// hocaları aynı olan farklı dersleri dagıt
-        /// hocaların birbirine yakın ders saat vermelerini sagla
-        /// 4. hangi sınıf hangi hoca ile başladıysa onunda tamamla - ignored
-        /// 5. 2 hoca 2 ayrı dersleri ortak verirler dead lock olabilir ama suan datalarda yok.
+        /// veya hocaların farklı dersleri var ama dersin başka hocası yokda requeue etmeli varsa diger hocadan devam etmeli - ok
+        ///  13. hoca 2 ayrı dersleri ortak verirler dead lock olabilir ama suan datalarda bu durum yok.
         /// </summary>
         /// <param name="point"></param>
         /// <param name="lesson"></param>
