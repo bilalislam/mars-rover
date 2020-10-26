@@ -109,7 +109,8 @@ namespace Scheduler
         /// fazla hocası olan aynı dersleri dagıt
         /// hocaları aynı olan farklı dersleri dagıt
         /// hocaların birbirine yakın ders saat vermelerini sagla
-        /// 4. hangi sınıf hangi hoca ile başladıysa onunda tamamla
+        /// 4. hangi sınıf hangi hoca ile başladıysa onunda tamamla - ignored
+        /// 5. 2 hoca 2 ayrı dersleri ortak verirler dead lock olabilir ama suan datalarda yok.
         /// </summary>
         /// <param name="point"></param>
         /// <param name="lesson"></param>
@@ -134,20 +135,19 @@ namespace Scheduler
                     return;
                 }
 
-                if (currentLessons.Any(x => x.Name == lesson.Name))
-                {
-                    valid = false;
-                    this.EnqueueIfRemained(lesson, false);
-                    SetLesson(point, DequeueWithCalculatedHour());
-                }
-
-
                 if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName))
                 {
                     valid = false;
-                    this.EnqueueIfRemained(lesson, false);
-                    SetLesson(point, DequeueWithCalculatedHour());
+                    this.Requeue(point, lesson);
                 }
+
+                if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName) &&
+                    currentLessons.Any(x => x.Name == lesson.Name))
+                {
+                    valid = false;
+                    this.Requeue(point, lesson);
+                }
+
 
                 if (valid)
                 {
@@ -156,6 +156,23 @@ namespace Scheduler
 
                     this.EnqueueIfRemained(lesson);
                 }
+            }
+        }
+
+        private void Requeue(Point point, Lesson lesson)
+        {
+            if (lesson.Teachers.Count > 1)
+            {
+                var currentLesson = point.Lessons.FirstOrDefault(x => x.Name == lesson.Name) ??
+                                    point.Lessons.FirstOrDefault(x => x.TeacherName == lesson.TeacherName);
+
+                lesson.ChangeTeacherExtractWith(currentLesson.TeacherName);
+                SetLesson(point, lesson);
+            }
+            else
+            {
+                this.EnqueueIfRemained(lesson, false);
+                SetLesson(point, DequeueWithCalculatedHour());
             }
         }
 
