@@ -118,7 +118,7 @@ namespace Scheduler
         /// </summary>
         /// <param name="point"></param>
         /// <param name="lesson"></param>
-        private void SetLesson(Point point, Lesson lesson, bool flag = true)
+        private void SetLesson(Point point, Lesson lesson)
         {
             if (!point.Lessons.Any())
             {
@@ -144,12 +144,6 @@ namespace Scheduler
                     return;
                 }
 
-                // if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName) &&
-                //     currentLessons.Any(x => x.Name == lesson.Name))
-                // {
-                //     this.Requeue(point, lesson);
-                //     return;
-                // }
 
                 point.AddLesson(lesson
                     .SetClassName(this.Name));
@@ -162,8 +156,7 @@ namespace Scheduler
         {
             if (lesson.Teachers.Count > 1)
             {
-                var currentLesson = point.Lessons.FirstOrDefault(x => x.Name == lesson.Name) ??
-                                    point.Lessons.FirstOrDefault(x => x.TeacherName == lesson.TeacherName);
+                var currentLesson = point.Lessons.FirstOrDefault(x => x.TeacherName == lesson.TeacherName);
 
                 lesson.ChangeTeacherExtractWith(currentLesson.TeacherName);
                 SetLesson(point, lesson);
