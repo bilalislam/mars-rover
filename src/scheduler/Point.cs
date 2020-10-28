@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Scheduler
 {
@@ -35,7 +34,9 @@ namespace Scheduler
         {
             this.Lessons.Add(lesson);
             if (lesson.Hour > 1)
+            {
                 this.Upper?.Lessons.Add(lesson);
+            }
         }
     }
 }

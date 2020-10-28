@@ -77,7 +77,8 @@ namespace Scheduler
                     SetLesson(point, lesson);
                     foreach (var l in point.Lessons)
                     {
-                        Console.WriteLine($"{l.ClassName} - {l.Name} - {l.TeacherName} - {point.X} - {point.Y}");
+                        if (l.ClassName == this.Name)
+                            Console.WriteLine($"{l.ClassName} - {l.Name} - {l.TeacherName} - {point.X} - {point.Y}");
                     }
                 }
 
@@ -95,7 +96,7 @@ namespace Scheduler
         ///  4. Farklı dersleri veren aynı hocaların kendi diger dersleri ile çakışmaması gerekir. - ok
         ///  5. Günlük ders saatleri 5 - ok
         ///  6. Son kalan dersin saatinin de günlük ders saatine ayarlanması lazım bu da tekrar hesap gerektirir - ok
-        ///  7. Sorun dersler parçalanıyor. - ignored
+        ///  7. Sorun dersler parçalanıyor. - ignored -tekli derslerden seçilebilir.
         ///  8. Hocaların verdiği toplam ders saatleri - nok
         ///  9. ders saatleri  farklı ama sınıf isimleri aynı olmaması lazım o da aynı gelmiş 12. madde ? - ok 
         ///  10. eksik dersler gördüm - ok
@@ -103,10 +104,21 @@ namespace Scheduler
         ///  12. birden fazla hoca da aynı anda aynı dersi verdikleri zaman gelen aynı ders ignore edilmesi lazım çünkü hocaların hiçbiri müsait değil
         /// veya hocaların farklı dersleri var ama dersin başka hocası yokda requeue etmeli varsa diger hocadan devam etmeli - ok
         ///  13. hoca 2 ayrı dersleri ortak verirler dead lock olabilir ama suan datalarda bu durum yok.
+        ///  14. beden dersinin hocası aynı kendi saatleri ile çakıştı ona bak , birden fazla hoca koysam ya da yeni
+        /// hoca versem ya overflow veriyor kendisi kaldıgı için sadece q'da ya da q empty ??
+        /// q'ya fazladan ders sokmamak lazım ya da fazla'dan kullanıyormus gibi olursa totalhour'u geçer
+        /// lan bir logic kuramadık be
+        /// ana sorun 2. index'i tekrar validate ederek set etmek ve bunu yaparken q'da az veya cok eklememek ve birden fazla
+        /// loop'a sokmamak !
+        /// her attıgım adımın bir sonra kini düşünmem lazım
+        /// retry ederken return olması lazım çünkü queue'ya bitirir
+        /// setlesson'ı tekrar yazmak lazım sanki
+        /// dynamic programming eksikliklerim var buna calıs !!!
+        /// 2 kere enqueue yapıyorum recursive yaparken bunu çöz !??
         /// </summary>
         /// <param name="point"></param>
         /// <param name="lesson"></param>
-        private void SetLesson(Point point, Lesson lesson)
+        private void SetLesson(Point point, Lesson lesson, bool flag = true)
         {
             if (!point.Lessons.Any())
             {
@@ -120,7 +132,6 @@ namespace Scheduler
                 var currentLessons = new List<Lesson>();
                 currentLessons.AddRange(point.Lessons);
 
-                var valid = true;
                 if (currentLessons.Any(x => x.ClassName == lesson.ClassName))
                 {
                     this.EnqueueIfRemained(lesson, false);
@@ -129,25 +140,21 @@ namespace Scheduler
 
                 if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName))
                 {
-                    valid = false;
                     this.Requeue(point, lesson);
+                    return;
                 }
 
-                if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName) &&
-                    currentLessons.Any(x => x.Name == lesson.Name))
-                {
-                    valid = false;
-                    this.Requeue(point, lesson);
-                }
+                // if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName) &&
+                //     currentLessons.Any(x => x.Name == lesson.Name))
+                // {
+                //     this.Requeue(point, lesson);
+                //     return;
+                // }
 
+                point.AddLesson(lesson
+                    .SetClassName(this.Name));
 
-                if (valid)
-                {
-                    point.AddLesson(lesson
-                        .SetClassName(this.Name));
-
-                    this.EnqueueIfRemained(lesson);
-                }
+                this.EnqueueIfRemained(lesson);
             }
         }
 
