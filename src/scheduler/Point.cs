@@ -33,10 +33,6 @@ namespace Scheduler
         public void AddLesson(Lesson lesson)
         {
             this.Lessons.Add(lesson);
-            if (lesson.Hour > 1)
-            {
-                this.Upper?.Lessons.Add(lesson);
-            }
         }
     }
 }

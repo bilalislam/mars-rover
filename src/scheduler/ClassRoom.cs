@@ -113,60 +113,67 @@ namespace Scheduler
         /// her attıgım adımın bir sonra kini düşünmem lazım
         /// retry ederken return olması lazım çünkü queue'ya bitirir
         /// setlesson'ı tekrar yazmak lazım sanki
-        /// dynamic programming eksikliklerim var buna calıs !!!
-        /// 2 kere enqueue yapıyorum recursive yaparken bunu çöz !??
+        /// dynamic programming eksikliklerim var buna calıs !
+        /// 2 kere enqueue yapıyorum recursive yaparken bunu çöz ? 
         /// </summary>
         /// <param name="point"></param>
         /// <param name="lesson"></param>
-        private void SetLesson(Point point, Lesson lesson)
+        private bool SetLesson(Point point, Lesson lesson, bool flag = true)
         {
             if (!point.Lessons.Any())
             {
                 point.AddLesson(lesson
                     .SetClassName(this.Name));
 
-                this.EnqueueIfRemained(lesson);
-            }
-            else
-            {
-                var currentLessons = new List<Lesson>();
-                currentLessons.AddRange(point.Lessons);
-
-                if (currentLessons.Any(x => x.ClassName == lesson.ClassName))
+                if (lesson.Hour > 1)
                 {
-                    this.EnqueueIfRemained(lesson, false);
-                    return;
+                    point.Upper?.Lessons.Add(lesson);
                 }
 
-                if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName))
-                {
-                    this.Requeue(point, lesson);
-                    return;
-                }
-
-
-                point.AddLesson(lesson
-                    .SetClassName(this.Name));
-
                 this.EnqueueIfRemained(lesson);
-            }
-        }
 
-        private void Requeue(Point point, Lesson lesson)
-        {
-            if (lesson.Teachers.Count > 1)
-            {
-                var currentLesson = point.Lessons.FirstOrDefault(x => x.TeacherName == lesson.TeacherName);
-
-                lesson.ChangeTeacherExtractWith(currentLesson.TeacherName);
-                SetLesson(point, lesson);
+                return true;
             }
-            else
+
+            var currentLessons = new List<Lesson>();
+            currentLessons.AddRange(point.Lessons);
+
+            if (currentLessons.Any(x => x.ClassName == lesson.ClassName))
             {
                 this.EnqueueIfRemained(lesson, false);
-                SetLesson(point, DequeueWithCalculatedHour());
+                return false;
             }
+
+            if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName))
+            {
+                if (lesson.Teachers.Count > 1)
+                {
+                    var currentLesson = point.Lessons.First(x => x.TeacherName == lesson.TeacherName);
+
+                    lesson.ChangeTeacherExtractWith(currentLesson.TeacherName);
+                    return SetLesson(point, lesson);
+                }
+
+                this.EnqueueIfRemained(lesson, false);
+                return SetLesson(point, DequeueWithCalculatedHour());
+            }
+
+
+            point.AddLesson(lesson
+                .SetClassName(this.Name));
+
+            //çift saat ders için
+            if (lesson.Hour > 1 && point.Upper != null && flag)
+            {
+                SetLesson(point.Upper, lesson, false);
+            }
+
+            if (flag)
+                this.EnqueueIfRemained(lesson);
+
+            return true;
         }
+
 
         /// <summary>
         /// TODO: 2 saatlik dersler parçalandı :(
