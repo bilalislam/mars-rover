@@ -13,6 +13,7 @@ namespace Scheduler
         public List<string> Teachers { get; private set; }
         public string TeacherName { get; private set; }
         public string ClassName { get; private set; }
+        public int Rate { get; private set; }
 
         private Lesson(string name, int totalHour, List<string> teachers)
         {
@@ -57,6 +58,12 @@ namespace Scheduler
         public Lesson SumUsed(int hour)
         {
             this.Used += hour;
+            return this;
+        }
+
+        public Lesson IncreaseRate()
+        {
+            ++Rate;
             return this;
         }
     }

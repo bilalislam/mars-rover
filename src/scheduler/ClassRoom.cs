@@ -10,7 +10,7 @@ namespace Scheduler
     public class ClassRoom
     {
         public string Name { get; private set; }
-        public Queue<Lesson> Lessons { get; private set; }
+        public List<Lesson> Lessons { get; private set; }
         public Sheet Sheet { get; private set; }
         public int CurrentDailyHours { get; private set; }
         public int TotalDailyHours { get; private set; }
@@ -39,11 +39,11 @@ namespace Scheduler
         /// <returns></returns>
         public ClassRoom SetLessonList(List<Lesson> lessons)
         {
-            Lessons = new Queue<Lesson>();
+            Lessons = new List<Lesson>();
             foreach (var lesson in lessons)
             {
                 lesson.SetClassName(this.Name);
-                Lessons.Enqueue(lesson);
+                Lessons.Add(lesson);
             }
 
             return this;
@@ -135,23 +135,25 @@ namespace Scheduler
                 return true;
             }
 
-            var currentLessons = new List<Lesson>();
-            currentLessons.AddRange(point.Lessons);
-
+            var currentLessons = point.Lessons;
             if (currentLessons.Any(x => x.ClassName == lesson.ClassName))
             {
+                lesson.IncreaseRate();
                 this.EnqueueIfRemained(lesson, false);
                 return false;
             }
 
             if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName))
             {
+                lesson.IncreaseRate();
                 if (lesson.Teachers.Count > 1)
                 {
                     var currentLesson = point.Lessons.First(x => x.TeacherName == lesson.TeacherName);
 
                     lesson.ChangeTeacherExtractWith(currentLesson.TeacherName);
                     return SetLesson(point, lesson);
+                    //math dersini hocasını değiştirince 2 kere used ediyor o yuzden kullanmasa da mat dersi ucuyor.
+                    //beden de aynı şekilde . Recursive sorununu düzeltmem lazım !!
                 }
 
                 this.EnqueueIfRemained(lesson, false);
@@ -162,7 +164,8 @@ namespace Scheduler
             point.AddLesson(lesson
                 .SetClassName(this.Name));
 
-            //çift saat ders için
+
+            //TODO:for even hours and it will refactor this code
             if (lesson.Hour > 1 && point.Upper != null && flag)
             {
                 SetLesson(point.Upper, lesson, false);
@@ -182,21 +185,24 @@ namespace Scheduler
         /// <returns></returns>
         private Lesson DequeueWithCalculatedHour()
         {
-            var lesson = Lessons.Dequeue();
-            var hour = lesson.Hour switch
+            var lessons = Lessons.OrderBy(x => x.Rate).ToArray();
+            var selectedLesson = lessons.First();
+            Lessons.Remove(selectedLesson);
+
+            var hour = selectedLesson.Hour switch
             {
                 0 => 2,
                 1 => 1,
                 _ => 2
             };
 
-            lesson.SetHour(hour);
+            selectedLesson.SetHour(hour);
             var remainedHours = Math.Abs(this.CurrentDailyHours - this.TotalDailyHours);
-            if (remainedHours < lesson.Hour && remainedHours != 0)
-                lesson.SetHour(remainedHours);
+            if (remainedHours < selectedLesson.Hour && remainedHours != 0)
+                selectedLesson.SetHour(remainedHours);
 
-            this.CurrentDailyHours += lesson.Hour;
-            return lesson;
+            this.CurrentDailyHours += selectedLesson.Hour;
+            return selectedLesson;
         }
 
         private void EnqueueIfRemained(Lesson lesson, bool isUsed = true)
@@ -210,7 +216,7 @@ namespace Scheduler
             lesson.SumUsed(lesson.Hour);
             if (lesson.Used == lesson.TotalHour) return;
             lesson.SetHour(lesson.TotalHour - lesson.Used);
-            Lessons.Enqueue(lesson);
+            Lessons.Add(lesson);
         }
     }
 }
