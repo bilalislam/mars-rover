@@ -174,8 +174,11 @@ namespace Scheduler
                     .IncreaseRate();
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(
-                    $"Ç : {lesson.ClassName} - {lesson.Name} - {lesson.TeacherName} - {point.X} - {point.Y}");
+                foreach (var item in currentLessons)
+                {
+                    Console.WriteLine(
+                        $"Ç : {lesson.ClassName} - {lesson.Name} - {lesson.TeacherName} - {point.X} - {point.Y}  | {item.ClassName} - {item.Name} - {item.TeacherName}");
+                }
                 Console.ResetColor();
 
                 return false;
@@ -191,7 +194,7 @@ namespace Scheduler
                 }
 
                 Console.ResetColor();
-                ;
+                
 
                 if (lesson.Teachers.Count > 1)
                 {
