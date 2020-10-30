@@ -47,7 +47,24 @@ namespace Scheduler
                 Lessons.Add(lesson);
             }
 
+            //Lessons = Shuffle(lessons);
             return this;
+        }
+
+        public List<T> Shuffle<T>(IList<T> list)
+        {
+            Random rng = new Random();
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+
+            return list.ToList();
         }
 
         public ClassRoom SetSheet(Sheet sht)
@@ -81,22 +98,26 @@ namespace Scheduler
                 for (int j = 0; j < Sheet.Points.GetLength(1); j++)
                 {
                     var lesson = DequeueWithCalculatedHour();
-                    var point = Sheet.Points[i, j];
-
-                    var hour = lesson.Hour;
-                    SetLesson(point, lesson);
-                    var isUsed = this.EnqueueIfRemained(lesson);
-
-                    if (isUsed && hour > 1)
+                    if (lesson != null)
                     {
-                        SetLesson(point.Upper, lesson);
-                    }
+                        var point = Sheet.Points[i, j];
+
+                        var hour = lesson.Hour;
+                        SetLesson(point, lesson);
+                        var isUsed = this.EnqueueIfRemained(lesson);
+
+                        if (isUsed && hour > 1 && point.Upper != null)
+                        {
+                            SetLesson(point.Upper, lesson);
+                        }
 
 
-                    foreach (var l in point.Lessons)
-                    {
-                        if (l.ClassName == this.Name)
-                            Console.WriteLine($"{l.ClassName} - {l.Name} - {l.TeacherName} - {point.X} - {point.Y}");
+                        foreach (var l in point.Lessons)
+                        {
+                            if (l.ClassName == this.Name)
+                                Console.WriteLine(
+                                    $"{l.ClassName} - {l.Name} - {l.TeacherName} - {point.X} - {point.Y}");
+                        }
                     }
                 }
 
@@ -152,11 +173,15 @@ namespace Scheduler
                 this.MarkUnUsed(lesson)
                     .IncreaseRate();
 
+                Console.WriteLine($"Ç : {lesson.ClassName} - {lesson.Name} - {lesson.TeacherName} - {point.X} - {point.Y}");
+
                 return false;
             }
 
             if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName))
             {
+                Console.WriteLine($"Ç : {lesson.ClassName} - {lesson.Name} - {lesson.TeacherName} - {point.X} - {point.Y}");
+
                 if (lesson.Teachers.Count > 1)
                 {
                     var currentLesson = point.Lessons.First(x => x.TeacherName == lesson.TeacherName);
@@ -167,18 +192,22 @@ namespace Scheduler
 
                 this.MarkUnUsed(lesson)
                     .IncreaseRate();
-                
+
                 //this.EnqueueIfRemained(lesson);
 
                 //bunu ayrı listeden alsak bu sefer o liste dolu oldugu sürece kullanılmasa bile diger listeye geçmez stack gibi çalışır
                 // bu call edilirse ve ok olursa o zaman önce kinin state'ini kaybetmiş oluruz
                 //true'yu bulana kadar calıstıgı için sonucu false gelmez sonucuna gore logic kurmamak lazım.
+                // 3c friday resim dersi patlıyor.Son 2 saatin ilk saatini pas geçtiği için son dersin upper'ı olamaz oyuzden patlıyor.
+                //recursive ve dynamic programming'in inceliklerini ogren
                 var newLesson = DequeueWithCalculatedHour();
+                if (newLesson == null) return false;
                 SetLesson(point, newLesson);
                 var hour = newLesson.Hour;
                 var isUsed = this.EnqueueIfRemained(newLesson);
 
-                if (isUsed && hour > 1)
+                //point.Upper != null aslında hour hesaplanarak geliyor ama çakışma oldugundan boyle oldu !!
+                if (isUsed && hour > 1 && point.Upper != null)
                 {
                     SetLesson(point.Upper, newLesson);
                 }
@@ -202,7 +231,8 @@ namespace Scheduler
         private Lesson DequeueWithCalculatedHour()
         {
             var lessons = Lessons.OrderBy(x => x.Rate).ToArray();
-            var selectedLesson = lessons.First();
+            var selectedLesson = lessons.FirstOrDefault();
+            if (selectedLesson == null) return null;
             Lessons.Remove(selectedLesson);
 
             var hour = selectedLesson.Hour switch
