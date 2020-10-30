@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Scheduler
 {
@@ -59,6 +60,13 @@ namespace Scheduler
         /// Burada aslında business class'ın olmaması lazım yani
         /// class ders ekler bunun validasyonlarını sheet bilmesi lazım
         /// o zaman daha clean olur
+        ///
+        /// 2 kere call edilirse false olan isSet true set edilir ve upper'a yazmaya calısır bu da karışmasına sebep olur
+        /// eger içerde olsa bu sefer kullanılmayan dersi kullanıldı diye override ediyor recursive oldugu için 
+        /// dequeu yaparken recursive olmaması lazım ama nasıl ??
+        ///true'yu bulana kadar calıstıgı için sonucu false gelmez sonucuna gore logic kurmamak lazım.
+        ///true geldiğinde false olması gereken ders için de çalışıyor !!
+        ///mutlaka kullanılmıs olması şartı ile upper'a yazabilirsin
         /// </summary>
         public void Draw()
         {
@@ -74,7 +82,17 @@ namespace Scheduler
                 {
                     var lesson = DequeueWithCalculatedHour();
                     var point = Sheet.Points[i, j];
+
+                    var hour = lesson.Hour;
                     SetLesson(point, lesson);
+                    var isUsed = this.EnqueueIfRemained(lesson);
+
+                    if (isUsed && hour > 1)
+                    {
+                        SetLesson(point.Upper, lesson);
+                    }
+
+
                     foreach (var l in point.Lessons)
                     {
                         if (l.ClassName == this.Name)
@@ -125,54 +143,52 @@ namespace Scheduler
                 point.AddLesson(lesson
                     .SetClassName(this.Name));
 
-                if (lesson.Hour > 1)
-                {
-                    point.Upper?.Lessons.Add(lesson);
-                }
-
-                this.EnqueueIfRemained(lesson);
-
                 return true;
             }
 
             var currentLessons = point.Lessons;
             if (currentLessons.Any(x => x.ClassName == lesson.ClassName))
             {
-                lesson.IncreaseRate();
-                this.EnqueueIfRemained(lesson, false);
+                this.MarkUnUsed(lesson)
+                    .IncreaseRate();
+
                 return false;
             }
 
             if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName))
             {
-                lesson.IncreaseRate();
                 if (lesson.Teachers.Count > 1)
                 {
                     var currentLesson = point.Lessons.First(x => x.TeacherName == lesson.TeacherName);
 
                     lesson.ChangeTeacherExtractWith(currentLesson.TeacherName);
                     return SetLesson(point, lesson);
-                    //math dersini hocasını değiştirince 2 kere used ediyor o yuzden kullanmasa da mat dersi ucuyor.
-                    //beden de aynı şekilde . Recursive sorununu düzeltmem lazım !!
                 }
 
-                this.EnqueueIfRemained(lesson, false);
-                return SetLesson(point, DequeueWithCalculatedHour());
+                this.MarkUnUsed(lesson)
+                    .IncreaseRate();
+                
+                //this.EnqueueIfRemained(lesson);
+
+                //bunu ayrı listeden alsak bu sefer o liste dolu oldugu sürece kullanılmasa bile diger listeye geçmez stack gibi çalışır
+                // bu call edilirse ve ok olursa o zaman önce kinin state'ini kaybetmiş oluruz
+                //true'yu bulana kadar calıstıgı için sonucu false gelmez sonucuna gore logic kurmamak lazım.
+                var newLesson = DequeueWithCalculatedHour();
+                SetLesson(point, newLesson);
+                var hour = newLesson.Hour;
+                var isUsed = this.EnqueueIfRemained(newLesson);
+
+                if (isUsed && hour > 1)
+                {
+                    SetLesson(point.Upper, newLesson);
+                }
+
+                return true;
             }
 
 
             point.AddLesson(lesson
                 .SetClassName(this.Name));
-
-
-            //TODO:for even hours and it will refactor this code
-            if (lesson.Hour > 1 && point.Upper != null && flag)
-            {
-                SetLesson(point.Upper, lesson, false);
-            }
-
-            if (flag)
-                this.EnqueueIfRemained(lesson);
 
             return true;
         }
@@ -205,18 +221,22 @@ namespace Scheduler
             return selectedLesson;
         }
 
-        private void EnqueueIfRemained(Lesson lesson, bool isUsed = true)
+        private bool EnqueueIfRemained(Lesson lesson)
         {
-            if (!isUsed)
-            {
-                this.CurrentDailyHours -= lesson.Hour;
-                lesson.SetHour(0);
-            }
-
+            bool isUsed = lesson.Hour > 0;
             lesson.SumUsed(lesson.Hour);
-            if (lesson.Used == lesson.TotalHour) return;
+            if (lesson.Used == lesson.TotalHour) return true;
             lesson.SetHour(lesson.TotalHour - lesson.Used);
             Lessons.Add(lesson);
+
+            return isUsed;
+        }
+
+        private Lesson MarkUnUsed(Lesson lesson)
+        {
+            this.CurrentDailyHours -= lesson.Hour;
+            lesson.SetHour(0);
+            return lesson;
         }
     }
 }
