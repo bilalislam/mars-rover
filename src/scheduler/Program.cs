@@ -35,7 +35,7 @@ namespace Scheduler
                 Lesson.Load("Türkçe", 4, new[] {"salih", "özlem"}.ToList()),
                 Lesson.Load("Matematik", 4, new[] {"özlem", "mehmet"}.ToList()),
                 Lesson.Load("Beden", 3, new[] {"alper"}.ToList()),
-                Lesson.Load("Resim", 2, new[] {"alper","bilal"}.ToList()),
+                Lesson.Load("Resim", 2, new[] {"alper"}.ToList()),
                 Lesson.Load("Fizik", 2, new[] {"esra"}.ToList()),
                 Lesson.Load("Kimya", 2, new[] {"sultan"}.ToList()),
                 Lesson.Load("Biyoloji", 2, new[] {"salih"}.ToList())

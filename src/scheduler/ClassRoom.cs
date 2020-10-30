@@ -173,14 +173,25 @@ namespace Scheduler
                 this.MarkUnUsed(lesson)
                     .IncreaseRate();
 
-                Console.WriteLine($"Ç : {lesson.ClassName} - {lesson.Name} - {lesson.TeacherName} - {point.X} - {point.Y}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(
+                    $"Ç : {lesson.ClassName} - {lesson.Name} - {lesson.TeacherName} - {point.X} - {point.Y}");
+                Console.ResetColor();
 
                 return false;
             }
 
             if (currentLessons.Any(x => x.TeacherName == lesson.TeacherName))
             {
-                Console.WriteLine($"Ç : {lesson.ClassName} - {lesson.Name} - {lesson.TeacherName} - {point.X} - {point.Y}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                foreach (var item in currentLessons)
+                {
+                    Console.WriteLine(
+                        $"Ç : {lesson.ClassName} - {lesson.Name} - {lesson.TeacherName} - {point.X} - {point.Y} | {item.ClassName} - {item.Name} - {item.TeacherName}");
+                }
+
+                Console.ResetColor();
+                ;
 
                 if (lesson.Teachers.Count > 1)
                 {
