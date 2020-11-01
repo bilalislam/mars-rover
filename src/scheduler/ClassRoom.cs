@@ -208,6 +208,16 @@ namespace Scheduler
                 this.MarkUnUsed(lesson)
                     .IncreaseRate();
 
+                //Uncomment olduktan sonra ornek olarak tarih dersini sürekli alıp loop'a giriyor. multi enqueu yapıyor. O yuzden loop'a giriyor
+                //ama yapmaz isek ders yutuyor bu logic'i tam oturtamadım çok kafam karıştı tüm case'leri handle etmek için 
+                //çok vakit gitti sonra temiz kafayla buna bak çünkü ders yutmasa mantık dogru gibi yuttugu için queue'da ders olmayınca 
+                //eksik kalıyor program ama conflict oldugunda kalanı queue'ya tekrar atması ve tekrar etmemezi lazım
+                //yukardaki logic ise bu kontrol ederken bu seferde queue'dan bitsede çıkmıyor. ):
+                //aslında bu method recursive olarak da düzgün çalışsa ondan sonra safe bir sonuc verir ama kod bozuk
+                //oldugu için başka sonuctan veya çözümlerimin işe yaradıgından emin olamıyorum.
+                // bu kodun recursive veya başka bir şekilde dogru queue'dan alıp kalanı atıp sonra bunu tekrar etmeden immutable olarak temiz 
+                // çalışması lazım. Çok zaman harcadık problemin başka case'leri ile kafanı topla buraya tekrar dön.
+                
                 //this.EnqueueIfRemained(lesson);
 
                 //bunu ayrı listeden alsak bu sefer o liste dolu oldugu sürece kullanılmasa bile diger listeye geçmez stack gibi çalışır
