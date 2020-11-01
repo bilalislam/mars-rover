@@ -179,6 +179,7 @@ namespace Scheduler
                     Console.WriteLine(
                         $"Ç : {lesson.ClassName} - {lesson.Name} - {lesson.TeacherName} - {point.X} - {point.Y}  | {item.ClassName} - {item.Name} - {item.TeacherName}");
                 }
+
                 Console.ResetColor();
 
                 return false;
@@ -194,7 +195,7 @@ namespace Scheduler
                 }
 
                 Console.ResetColor();
-                
+
 
                 if (lesson.Teachers.Count > 1)
                 {
@@ -240,6 +241,20 @@ namespace Scheduler
         /// <summary>
         /// TODO: 2 saatlik dersler parçalandı :(
         /// Tekli sayılardan alırsam aslında 2-2 'lik dersleri bölmem ama suan gerek yok
+        /// Queue olarak olmadı !
+        /// Rate olmadı !
+        /// Random olmadı !
+        /// Dersleri Shuffle ettim girdi olarak verilirken o da olmadı !
+        /// Ama subelerin birleştirerek de çözüm önerimi literaturde var ?
+        ///
+        /// Literatur
+        /// Graph Boyama
+        /// Tabu search
+        /// Tam sayı
+        /// Benzetim Tavlaması (Simulated Annealing-SA)
+        /// Np - hard problem bu problemin girdiği gruptur. Buna timetabling de denir.
+        ///
+        /// Aslında çalıştıgım tüm şirketlerde servis scheduling problemi var . Acaba yapıp idari işlere satsak mı :) 
         /// </summary>
         /// <returns></returns>
         private Lesson DequeueWithCalculatedHour()
