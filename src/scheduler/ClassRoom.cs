@@ -253,6 +253,9 @@ namespace Scheduler
         /// Tam sayı
         /// Benzetim Tavlaması (Simulated Annealing-SA)
         /// Np - hard problem bu problemin girdiği gruptur. Buna timetabling de denir.
+        /// N-Queen ->https://www.geeksforgeeks.org/n-queen-problem-backtracking-3/#:~:text=The%20N%20Queen%20is%20the,blocks%20where%20queens%20are%20placed.
+        /// Ama bunun time complexity'si çok fazla
+        /// Kaynak : https://bilalsaim.com/yapay-zeka/sezgisel-optimizasyon-algoritmalari-heuristic-algorithms/
         ///
         /// Aslında çalıştıgım tüm şirketlerde servis scheduling problemi var . Acaba yapıp idari işlere satsak mı :) 
         /// </summary>
